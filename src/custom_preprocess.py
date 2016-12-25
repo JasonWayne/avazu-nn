@@ -16,6 +16,8 @@ def load_raw_data_and_split_by_dt(path, output_dir):
             dt = hour_column[:6]
             hour = hour_column[6:]
             output_file_dict[dt].write(",".join(row[:2] + [hour] + row[3:]) + "\n")
+    for v in output_file_dict.values():
+        v.close()
 
 
 def load_raw_data_and_hash_and_split_by_dt(path, output_dir):
@@ -34,6 +36,31 @@ def load_raw_data_and_hash_and_split_by_dt(path, output_dir):
             for i in range(2, 24):
                 row[i] = str(hash(row[i]) % 1024)
             output_file_dict[dt].write(",".join(row[1:]) + "\n")
+    for v in output_file_dict.values():
+        v.close()
+
+
+def load_hash_split_train_val(path, output_dir):
+    base_datetime = datetime.strptime('141021', '%y%m%d')
+    train = open(output_dir + '/' + 'train_hashed_1024.txt', 'w')
+    validation = open(output_dir + '/' + 'test_hash_1024.txt', 'w')
+
+    with open(path, 'rb') as csvfile:
+        header = csvfile.readline()
+        reader = csv.reader(csvfile, delimiter=',')
+        for row in reader:
+            hour_column = row[2]
+            dt = hour_column[:6]
+            hour = hour_column[6:]
+            row[2] = hour
+            for i in range(2, 24):
+                row[i] = str(hash(row[i]) % 1024 + (i - 2) * 1024)
+            if dt >= '20141130':
+                validation.write(",".join(row[1:]) + "\n")
+            else:
+                train.write(",".join(row[1:]) + "\n")
+    train.close()
+    validation.close()
 
 
 class TestCustomPreprocess(unittest.TestCase):
@@ -42,6 +69,9 @@ class TestCustomPreprocess(unittest.TestCase):
 
     def test_load_raw_data_and_hash_and_split_by_dt(self):
         load_raw_data_and_hash_and_split_by_dt('../fixtures/train.thumb', '../fixtures')
+
+    def test_load_hash_split_train_val(self):
+        load_hash_split_train_val('../fixtures/train.thumb', '../fixtures')
 
 
 if __name__ == '__main__':
