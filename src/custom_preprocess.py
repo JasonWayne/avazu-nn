@@ -55,7 +55,7 @@ def load_hash_split_train_val(path, output_dir):
             row[2] = hour
             for i in range(2, 24):
                 row[i] = str(hash(row[i]) % 1024 + (i - 2) * 1024)
-            if dt >= '20141130':
+            if dt >= '141030':
                 validation.write(",".join(row[1:]) + "\n")
             else:
                 train.write(",".join(row[1:]) + "\n")
