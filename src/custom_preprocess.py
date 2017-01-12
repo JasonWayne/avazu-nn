@@ -76,8 +76,6 @@ def load_hash_split_train_val_test(path, output_dir):
     test.close()
 
 
-
-
 class TestCustomPreprocess(unittest.TestCase):
     def test_load_raw_data_and_split_by_dt(self):
         load_raw_data_and_split_by_dt('../fixtures/train.thumb', '../fixtures')
