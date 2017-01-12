@@ -91,3 +91,4 @@ ENV/
 # add by jason
 *.csv
 .idea
+*.txt
